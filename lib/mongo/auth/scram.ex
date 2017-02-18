@@ -14,17 +14,17 @@ defmodule Mongo.Auth.SCRAM do
 
     # TODO: with/else in elixir 1.3
     result =
-      with {:ok, %{"ok" => 1} = reply} <- command(-2, message, s),
+      with {:ok, %{"ok" => 1.0} = reply} <- command(-2, message, s),
            {message, signature} = first(reply, first_bare, username, password, nonce),
-           {:ok, %{"ok" => 1} = reply} <- command(-3, message, s),
+           {:ok, %{"ok" => 1.0} = reply} <- command(-3, message, s),
            message = second(reply, signature),
-           {:ok, %{"ok" => 1} = reply} = command(-4, message, s),
+           {:ok, %{"ok" => 1.0} = reply} = command(-4, message, s),
            do: final(reply)
 
     case result do
       :ok ->
         :ok
-      {:ok, %{"ok" => 0, "errmsg" => reason, "code" => code}} ->
+      {:ok, %{"ok" => 0.0, "errmsg" => reason, "code" => code}} ->
         {:error, Mongo.Error.exception(message: "auth failed for user #{username}: #{reason}", code: code)}
       {:error, _} = error ->
         error
